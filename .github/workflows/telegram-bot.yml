@@ -12,9 +12,9 @@ on:
           - invoke
           - scheduled
       text:
-        description: "Texto para invocar al bot. Ejemplo: /bot hola"
+        description: "Texto para invocar al bot. Ejemplo: /panito hola"
         required: false
-        default: "/bot hola"
+        default: "/panito hola"
       message_id:
         description: "ID del mensaje programado"
         required: false
