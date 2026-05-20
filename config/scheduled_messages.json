@@ -1,0 +1,12 @@
+{
+  "messages": [
+    {
+      "id": "saludo_lunes",
+      "text": "Buenos dias. El lunes ha sido detectado. Procedan con sospecha."
+    },
+    {
+      "id": "viernes_tarde",
+      "text": "Reporte oficial: el viernes ya tiene cara de salida."
+    }
+  ]
+}

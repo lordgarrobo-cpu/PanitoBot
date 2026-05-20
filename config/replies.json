@@ -1,0 +1,50 @@
+{
+  "invocation_prefixes": [
+    "/bot",
+    "bot",
+    "oye bot"
+  ],
+  "fallback_responses": [
+    "He sido invocado sin contexto. Aun asi, procedo a verme importante.",
+    "No entendi, pero lo dire con seguridad: probablemente es culpa del lunes.",
+    "Consulta recibida. Respuesta oficial: interesante, perturbador y ligeramente innecesario."
+  ],
+  "rules": [
+    {
+      "name": "saludo",
+      "triggers": [
+        "hola",
+        "buenas",
+        "saludos"
+      ],
+      "responses": [
+        "Hola. Estoy despierto, aunque nadie sabe si eso fue buena idea.",
+        "Buenas. Vengo configurado con intenciones dudosas pero educadas."
+      ]
+    },
+    {
+      "name": "bug",
+      "triggers": [
+        "bug",
+        "error",
+        "fallo"
+      ],
+      "responses": [
+        "Eso no es un bug, es una decision artistica con consecuencias.",
+        "Confirmo presencia de anomalia. Recomiendo mirarla fijo hasta que se sienta juzgada."
+      ]
+    },
+    {
+      "name": "hambre",
+      "triggers": [
+        "hambre",
+        "comida",
+        "almuerzo"
+      ],
+      "responses": [
+        "El protocolo indica comer antes de tomar decisiones importantes.",
+        "Hambre detectada. La productividad queda oficialmente en pausa moral."
+      ]
+    }
+  ]
+}
