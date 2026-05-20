@@ -69,6 +69,10 @@ def send_message(chat_id, text):
     )
 
 
+def delete_webhook():
+    return telegram_request("deleteWebhook", {"drop_pending_updates": "false"})
+
+
 def send_scheduled_message(message_id):
     config = load_json(SCHEDULED_MESSAGES_PATH)
     messages = config.get("messages", [])
@@ -129,6 +133,8 @@ def build_reply(input_text):
 
 
 def poll_updates():
+    delete_webhook()
+
     state = load_state()
     payload = {
         "timeout": 0,
