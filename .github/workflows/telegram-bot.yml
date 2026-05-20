@@ -11,6 +11,7 @@ on:
         options:
           - invoke
           - scheduled
+          - poll
       text:
         description: "Texto para invocar al bot. Ejemplo: /panito hola"
         required: false
@@ -20,7 +21,7 @@ on:
         required: false
         default: "saludo_lunes"
   schedule:
-    - cron: "*/30 * * * *"
+    - cron: "7,37 * * * *"
     - cron: "0 14 * * 1"
     - cron: "30 22 * * 5"
 
@@ -33,10 +34,10 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: "3.12"
 
@@ -56,6 +57,12 @@ jobs:
           MESSAGE_ID: ${{ inputs.message_id }}
         run: python bot.py send-scheduled --message-id "$MESSAGE_ID"
 
+      - name: Run manual polling
+        if: github.event_name == 'workflow_dispatch' && inputs.mode == 'poll'
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+        run: python bot.py poll-updates
+
       - name: Send Monday message
         if: github.event_name == 'schedule' && github.event.schedule == '0 14 * * 1'
         env:
@@ -71,13 +78,13 @@ jobs:
         run: python bot.py send-scheduled --message-id viernes_tarde
 
       - name: Poll chat invocations
-        if: github.event_name == 'schedule' && github.event.schedule == '*/30 * * * *'
+        if: github.event_name == 'schedule' && github.event.schedule == '7,37 * * * *'
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
         run: python bot.py poll-updates
 
       - name: Save Telegram offset
-        if: github.event_name == 'schedule' && github.event.schedule == '*/30 * * * *'
+        if: github.event_name == 'schedule' && github.event.schedule == '7,37 * * * *'
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
