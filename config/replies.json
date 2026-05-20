@@ -1,8 +1,8 @@
 {
   "invocation_prefixes": [
-    "/bot",
-    "bot",
-    "oye bot"
+    "/panito",
+    "panito",
+    "oye panito"
   ],
   "fallback_responses": [
     "He sido invocado sin contexto. Aun asi, procedo a verme importante.",
