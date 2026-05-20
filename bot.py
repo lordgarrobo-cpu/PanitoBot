@@ -58,15 +58,17 @@ def save_state(state):
         file.write("\n")
 
 
-def send_message(chat_id, text):
-    return telegram_request(
-        "sendMessage",
-        {
-            "chat_id": chat_id,
-            "text": text,
-            "disable_web_page_preview": "true",
-        },
-    )
+def send_message(chat_id, text, reply_to_message_id=None):
+    payload = {
+        "chat_id": chat_id,
+        "text": text,
+        "disable_web_page_preview": "true",
+    }
+
+    if reply_to_message_id is not None:
+        payload["reply_to_message_id"] = reply_to_message_id
+
+    return telegram_request("sendMessage", payload)
 
 
 def delete_webhook():
@@ -166,6 +168,7 @@ def poll_updates():
             continue
 
         text = message.get("text")
+        message_id = message.get("message_id")
         chat = message.get("chat") or {}
         chat_id = chat.get("id")
 
@@ -176,7 +179,7 @@ def poll_updates():
         if not reply:
             continue
 
-        send_message(chat_id, reply)
+        send_message(chat_id, reply, reply_to_message_id=message_id)
         replies_sent += 1
 
     if next_offset is not None:
