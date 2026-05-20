@@ -1,0 +1,86 @@
+name: Telegram bot
+
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "Modo a ejecutar"
+        required: true
+        default: "invoke"
+        type: choice
+        options:
+          - invoke
+          - scheduled
+      text:
+        description: "Texto para invocar al bot. Ejemplo: /bot hola"
+        required: false
+        default: "/bot hola"
+      message_id:
+        description: "ID del mensaje programado"
+        required: false
+        default: "saludo_lunes"
+  schedule:
+    - cron: "*/30 * * * *"
+    - cron: "0 14 * * 1"
+    - cron: "30 22 * * 5"
+
+permissions:
+  contents: write
+
+jobs:
+  telegram-bot:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Run manual invocation
+        if: github.event_name == 'workflow_dispatch' && inputs.mode == 'invoke'
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_DEFAULT_CHAT_ID: ${{ secrets.TELEGRAM_DEFAULT_CHAT_ID }}
+          INPUT_TEXT: ${{ inputs.text }}
+        run: python bot.py invoke --text "$INPUT_TEXT"
+
+      - name: Run manual scheduled message
+        if: github.event_name == 'workflow_dispatch' && inputs.mode == 'scheduled'
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_DEFAULT_CHAT_ID: ${{ secrets.TELEGRAM_DEFAULT_CHAT_ID }}
+          MESSAGE_ID: ${{ inputs.message_id }}
+        run: python bot.py send-scheduled --message-id "$MESSAGE_ID"
+
+      - name: Send Monday message
+        if: github.event_name == 'schedule' && github.event.schedule == '0 14 * * 1'
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_DEFAULT_CHAT_ID: ${{ secrets.TELEGRAM_DEFAULT_CHAT_ID }}
+        run: python bot.py send-scheduled --message-id saludo_lunes
+
+      - name: Send Friday message
+        if: github.event_name == 'schedule' && github.event.schedule == '30 22 * * 5'
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_DEFAULT_CHAT_ID: ${{ secrets.TELEGRAM_DEFAULT_CHAT_ID }}
+        run: python bot.py send-scheduled --message-id viernes_tarde
+
+      - name: Poll chat invocations
+        if: github.event_name == 'schedule' && github.event.schedule == '*/30 * * * *'
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+        run: python bot.py poll-updates
+
+      - name: Save Telegram offset
+        if: github.event_name == 'schedule' && github.event.schedule == '*/30 * * * *'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add state/telegram_offset.json
+          git diff --cached --quiet || git commit -m "Update Telegram polling offset"
+          git push
