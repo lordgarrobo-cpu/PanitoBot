@@ -7,6 +7,30 @@
     {
       "id": "viernes_tarde",
       "text": "Reporte oficial: el viernes ya tiene cara de salida."
+    },
+    {
+      "id": "ejercicio_manana",
+      "weighted_blocks": [
+        {
+          "weight": 80,
+          "messages": [
+            "Panito dice que mañana es dia fitnes, asi que hay que madrugar para el ejercicio",
+            "Hoy la wawa se cayo y casi hubo un terremoto, mañana sin duda toca ejercicio",
+            "Hasta aca se siente la cermeza que se tomo el gatito, no hay escapatoria del ejericio de mañana",
+            "El jefe panito es fitnes y quiere que los demas lo sean, mañana toca ejercicio",
+            "woshhhh el jefe panito a conjurado hora del ejercicio mañana por la mañana.",
+            "Panito ha dicho dormid temprano hoy que mañana llega la hora del ejercicio"
+          ]
+        },
+        {
+          "weight": 20,
+          "messages": [
+            "Panito ha chambeado mucho, ha decidido que mañana se descansa del ejercicio",
+            "Es hora del maco, Panito cree que mañana todos merecen comer maco y no hacer ejercicio",
+            "Panito se entero que el gatito se comio unos travas hoy y quedo cansado para el ejercicio de mañana, sera mejor que descansemos"
+          ]
+        }
+      ]
     }
   ]
 }

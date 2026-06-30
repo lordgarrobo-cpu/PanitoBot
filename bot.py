@@ -75,6 +75,41 @@ def delete_webhook():
     return telegram_request("deleteWebhook", {"drop_pending_updates": "false"})
 
 
+def choose_weighted_block_message(message_config):
+    blocks = message_config.get("weighted_blocks") or []
+    valid_blocks = []
+
+    for block in blocks:
+        weight = block.get("weight", 0)
+        messages = [
+            message.strip()
+            for message in block.get("messages", [])
+            if isinstance(message, str) and message.strip()
+        ]
+
+        if weight > 0 and messages:
+            valid_blocks.append({"weight": weight, "messages": messages})
+
+    if not valid_blocks:
+        raise BotConfigError(
+            f"El mensaje '{message_config.get('id', '<sin id>')}' no tiene bloques validos."
+        )
+
+    selected_block = random.choices(
+        valid_blocks,
+        weights=[block["weight"] for block in valid_blocks],
+        k=1,
+    )[0]
+    return random.choice(selected_block["messages"])
+
+
+def get_scheduled_message_text(message_config):
+    if message_config.get("weighted_blocks"):
+        return choose_weighted_block_message(message_config)
+
+    return message_config.get("text", "").strip()
+
+
 def send_scheduled_message(message_id):
     config = load_json(SCHEDULED_MESSAGES_PATH)
     messages = config.get("messages", [])
@@ -92,7 +127,7 @@ def send_scheduled_message(message_id):
             "El mensaje no tiene chat_id y falta TELEGRAM_DEFAULT_CHAT_ID."
         )
 
-    text = match.get("text", "").strip()
+    text = get_scheduled_message_text(match)
     if not text:
         raise BotConfigError(f"El mensaje '{message_id}' no tiene texto.")
 
