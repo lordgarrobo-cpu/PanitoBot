@@ -24,8 +24,8 @@ on:
     - cron: "7,37 * * * *"
     - cron: "0 14 * * 1"
     - cron: "30 22 * * 5"
-    # Guatemala es UTC-6. 01:30 UTC lunes/miercoles/viernes = 19:30 domingo/martes/jueves.
-    - cron: "30 1 * * 1,3,5"
+    # Guatemala es UTC-6. 00:00 UTC lunes/miercoles/viernes = 18:00 domingo/martes/jueves.
+    - cron: "0 0 * * 1,3,5"
 
 permissions:
   contents: write
@@ -80,7 +80,7 @@ jobs:
         run: python bot.py send-scheduled --message-id viernes_tarde
 
       - name: Send exercise reminder
-        if: github.event_name == 'schedule' && github.event.schedule == '30 1 * * 1,3,5'
+        if: github.event_name == 'schedule' && github.event.schedule == '0 0 * * 1,3,5'
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_DEFAULT_CHAT_ID: ${{ secrets.TELEGRAM_DEFAULT_CHAT_ID }}
